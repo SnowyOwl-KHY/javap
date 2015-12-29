@@ -30,7 +30,7 @@ public class Parser implements ConstantPoolSource {
 
     private String superClassName;
 
-    private List<String> interfaceNames;
+    private List<String> interfaceNames = new ArrayList<>();
 
     public Parser(InputStream inputStream) {
         this.inputStream = inputStream;
@@ -48,7 +48,7 @@ public class Parser implements ConstantPoolSource {
 
         readClassInfo();
 
-        return getResult();
+        return describe();
     }
 
     private boolean isMagicNumber(byte[] bytes) {
@@ -121,11 +121,37 @@ public class Parser implements ConstantPoolSource {
         return constantPool.get(index - 1);     // 常量池索引从1开始
     }
 
-    private String getResult() {
+    private String describe() {
         StringBuilder result = new StringBuilder();
-        result.append(classAccessFlag.getDescriptor()).append(className).append(" extends ").append(superClassName).append("\n");
+
+        describeClassInfo(result);
+
         result.append(version).append("\n");
         result.append(classAccessFlag).append("\n");
+
+        describeConstantPool(result);
+
+        return result.toString();
+    }
+
+    private void describeClassInfo(StringBuilder result) {
+        result.append(classAccessFlag.getDescriptor()).append(className);
+        if (!superClassName.equals("java/lang/Object")) {
+            result.append(" extends ").append(superClassName);
+        }
+        if (interfaceNames.size() > 0) {
+            result.append(" implements ");
+            for (int i = 0; i < interfaceNames.size(); ++i) {
+                if (i > 0) {
+                    result.append(", ");
+                }
+                result.append(interfaceNames.get(i));
+            }
+        }
+        result.append("\n");
+    }
+
+    private void describeConstantPool(StringBuilder result) {
         result.append("Constant pool:\n");
         int maxIndexLength = String.valueOf(constantPool.size()).length();
         for (int i = 1; i <= constantPool.size(); i++) {
@@ -137,6 +163,6 @@ public class Parser implements ConstantPoolSource {
             }
             result.append("#").append(i).append(" = ").append(constantInfo).append("\n");
         }
-        return result.toString();
     }
+    
 }
