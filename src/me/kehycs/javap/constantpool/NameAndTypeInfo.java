@@ -35,7 +35,7 @@ public class NameAndTypeInfo extends ConstantInfo {
 
     @Override
     public String getRealContent() {
-        return constantPoolSource.getConstantInfo(nameIndex).getRealContent()
-                + ":" + constantPoolSource.getConstantInfo(descriptorIndex).getRealContent();
+        return "\"" + constantPoolSource.getConstantInfo(nameIndex).getRealContent()
+                + "\":" + constantPoolSource.getConstantInfo(descriptorIndex).getRealContent();
     }
 }

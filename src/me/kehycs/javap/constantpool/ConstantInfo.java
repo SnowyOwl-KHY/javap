@@ -23,7 +23,7 @@ public abstract class ConstantInfo {
 
     ConstantPoolSource constantPoolSource;
 
-    public static ConstantInfo newConstantInfo(InputStream inputStream, ConstantPoolSource source) throws IOException, ClassFileParseException {
+    public static ConstantInfo newConstantInfo(InputStream inputStream, ConstantPoolSource constantPool) throws IOException, ClassFileParseException {
         int tag = inputStream.read();
         Class<? extends ConstantInfo> typeClass = typeMap.get(tag);
         if (typeClass == null) {
@@ -35,7 +35,7 @@ public abstract class ConstantInfo {
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
-        constantInfo.constantPoolSource = source;
+        constantInfo.constantPoolSource = constantPool;
         constantInfo.readData(inputStream);
         return constantInfo;
     }
@@ -44,7 +44,9 @@ public abstract class ConstantInfo {
 
     @Override
     public String toString() {
-        return String.format("%-16s%s", getTypeName(), getContent());
+        String realContent = getRealContent();
+        String content = getContent();
+        return String.format("%-16s%-16s%s", getTypeName(), content, content.equals(realContent) ? "" : "// " + getRealContent());
     }
 
     public abstract String getTypeName();

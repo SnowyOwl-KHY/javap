@@ -32,6 +32,8 @@ public class Parser implements ConstantPoolSource {
 
     private List<String> interfaceNames = new ArrayList<>();
 
+    private List<FieldInfo> fieldInfoList = new ArrayList<>();
+
     public Parser(InputStream inputStream) {
         this.inputStream = inputStream;
     }
@@ -47,6 +49,8 @@ public class Parser implements ConstantPoolSource {
         readAccessFlag();
 
         readClassInfo();
+
+        readFieldInfo();
 
         return describe();
     }
@@ -117,6 +121,17 @@ public class Parser implements ConstantPoolSource {
         }
     }
 
+    private void readFieldInfo() throws IOException, ClassFileParseException {
+        byte[] tempData = new byte[2];
+
+        inputStream.read(tempData);
+        int fieldInfoCount = (int) ConvertTool.parseNumber(tempData);
+        for (int i = 0; i < fieldInfoCount; i++) {
+            FieldInfo fieldInfo = new FieldInfo(inputStream, this);
+            fieldInfoList.add(fieldInfo);
+        }
+    }
+
     public ConstantInfo getConstantInfo(int index) {
         return constantPool.get(index - 1);     // 常量池索引从1开始
     }
@@ -124,18 +139,22 @@ public class Parser implements ConstantPoolSource {
     private String describe() {
         StringBuilder result = new StringBuilder();
 
-        describeClassInfo(result);
+        describeClass(result);
 
         result.append(version).append("\n");
-        result.append(classAccessFlag).append("\n");
+        result.append("  ").append(classAccessFlag).append("\n");
 
         describeConstantPool(result);
+
+        result.append("{\n");
+
+        describeFields(result);
 
         return result.toString();
     }
 
-    private void describeClassInfo(StringBuilder result) {
-        result.append(classAccessFlag.getDescriptor()).append(className);
+    private void describeClass(StringBuilder result) {
+        result.append(classAccessFlag.getClassModifiers()).append(className);
         if (!superClassName.equals("java/lang/Object")) {
             result.append(" extends ").append(superClassName);
         }
@@ -162,6 +181,14 @@ public class Parser implements ConstantPoolSource {
                 result.append(" ");
             }
             result.append("#").append(i).append(" = ").append(constantInfo).append("\n");
+        }
+    }
+
+    private void describeFields(StringBuilder result) {
+        for (FieldInfo fieldInfo : fieldInfoList) {
+            result.append("  ").append(fieldInfo).append('\n');
+            result.append("    descriptor: ").append(fieldInfo.getDescriptor()).append('\n');
+            result.append("    ").append(fieldInfo.getAccessFlag()).append("\n\n");
         }
     }
     
