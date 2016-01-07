@@ -66,7 +66,7 @@ public class ConvertTool {
     public static Pair<String, String[]> parseMethodDescriptor(String methodDescriptor) {
         int rightBracketIndex = methodDescriptor.indexOf(')');
 
-        String returnTypeDescriptor = methodDescriptor.substring(rightBracketIndex + 1);
+        String returnTypeDescriptor = parseSingleDescriptor(methodDescriptor.substring(rightBracketIndex + 1));
 
         String parameterTypeDescriptor = methodDescriptor.substring(1, rightBracketIndex);
         List<String> parameterTypeList = new ArrayList<>();

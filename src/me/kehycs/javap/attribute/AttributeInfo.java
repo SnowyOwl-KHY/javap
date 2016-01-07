@@ -16,6 +16,9 @@ public abstract class AttributeInfo {
     private static Map<String, Class<? extends AttributeInfo>> typeMap = new HashMap<>();
     static {
         typeMap.put("Code", CodeAttribute.class);
+        typeMap.put("Exception", ExceptionAttribute.class);
+        typeMap.put("LineNumberTable", LineNumberTableAttribute.class);
+        typeMap.put("LocalVariableTable", LocalVariableTableAttribute.class);
     }
 
     protected ConstantPoolSource constantPoolSource;

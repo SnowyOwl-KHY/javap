@@ -4,6 +4,8 @@ import me.kehycs.javap.accessflag.ClassAccessFlag;
 import me.kehycs.javap.constantpool.ConstantInfo;
 import me.kehycs.javap.constantpool.ConstantPoolSource;
 import me.kehycs.javap.exception.ClassFileParseException;
+import me.kehycs.javap.member.FieldInfo;
+import me.kehycs.javap.member.MethodInfo;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -30,6 +32,8 @@ public class Parser implements ConstantPoolSource {
 
     private List<FieldInfo> fieldInfoList = new ArrayList<>();
 
+    private List<MethodInfo> methodInfoList = new ArrayList<>();
+
     public Parser(DataInputStream dataInputStream) {
         this.dataInputStream = dataInputStream;
     }
@@ -51,6 +55,8 @@ public class Parser implements ConstantPoolSource {
         readClassInfo();
 
         readFieldInfo();
+
+        readMethodInfo();
 
         return describe();
     }
@@ -121,7 +127,8 @@ public class Parser implements ConstantPoolSource {
     public void readMethodInfo() throws IOException, ClassFileParseException {
         int methodInfoCount = dataInputStream.readUnsignedShort();
         for (int i = 0; i < methodInfoCount; ++i) {
-
+            MethodInfo methodInfo = new MethodInfo(dataInputStream, this);
+            methodInfoList.add(methodInfo);
         }
     }
 
@@ -143,11 +150,13 @@ public class Parser implements ConstantPoolSource {
 
         describeFields(result);
 
-        return result.toString();
+        describeMethods(result);
+
+        return result.append('}').toString();
     }
 
     private void describeClass(StringBuilder result) {
-        result.append(classAccessFlag.getClassModifiers()).append(className);
+        result.append(classAccessFlag.getModifiers()).append(className);
         if (!superClassName.equals("java/lang/Object")) {
             result.append(" extends ").append(superClassName);
         }
@@ -179,9 +188,13 @@ public class Parser implements ConstantPoolSource {
 
     private void describeFields(StringBuilder result) {
         for (FieldInfo fieldInfo : fieldInfoList) {
-            result.append("  ").append(fieldInfo).append('\n');
-            result.append("    descriptor: ").append(fieldInfo.getDescriptor()).append('\n');
-            result.append("    ").append(fieldInfo.getAccessFlag()).append("\n\n");
+            result.append(fieldInfo.getBaseInfo()).append('\n');
+        }
+    }
+
+    private void describeMethods(StringBuilder result) {
+        for (MethodInfo methodInfo : methodInfoList) {
+            result.append(methodInfo.getBaseInfo()).append('\n');
         }
     }
     
