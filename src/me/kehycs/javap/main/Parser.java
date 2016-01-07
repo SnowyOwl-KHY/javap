@@ -5,6 +5,7 @@ import me.kehycs.javap.constantpool.ConstantInfo;
 import me.kehycs.javap.constantpool.ConstantInfoProvider;
 import me.kehycs.javap.exception.ClassFileParseException;
 import me.kehycs.javap.member.FieldInfo;
+import me.kehycs.javap.member.MemberInfo;
 import me.kehycs.javap.member.MethodInfo;
 
 import java.io.DataInputStream;
@@ -30,9 +31,7 @@ public class Parser implements ConstantInfoProvider, ClassInfoProvider {
 
     private List<String> interfaceNames = new ArrayList<>();
 
-    private List<FieldInfo> fieldInfoList = new ArrayList<>();
-
-    private List<MethodInfo> methodInfoList = new ArrayList<>();
+    private List<MemberInfo> memberInfoList = new ArrayList<>();
 
     public Parser(DataInputStream dataInputStream) {
         this.dataInputStream = dataInputStream;
@@ -120,7 +119,7 @@ public class Parser implements ConstantInfoProvider, ClassInfoProvider {
         int fieldInfoCount = dataInputStream.readUnsignedShort();
         for (int i = 0; i < fieldInfoCount; i++) {
             FieldInfo fieldInfo = new FieldInfo(dataInputStream, this, this);
-            fieldInfoList.add(fieldInfo);
+            memberInfoList.add(fieldInfo);
         }
     }
 
@@ -128,7 +127,7 @@ public class Parser implements ConstantInfoProvider, ClassInfoProvider {
         int methodInfoCount = dataInputStream.readUnsignedShort();
         for (int i = 0; i < methodInfoCount; ++i) {
             MethodInfo methodInfo = new MethodInfo(dataInputStream, this, this);
-            methodInfoList.add(methodInfo);
+            memberInfoList.add(methodInfo);
         }
     }
 
@@ -148,9 +147,7 @@ public class Parser implements ConstantInfoProvider, ClassInfoProvider {
 
         result.append("{\n");
 
-        describeFields(result);
-
-        describeMethods(result);
+        describeMembers(result);
 
         return result.append('}').toString();
     }
@@ -186,15 +183,12 @@ public class Parser implements ConstantInfoProvider, ClassInfoProvider {
         }
     }
 
-    private void describeFields(StringBuilder result) {
-        for (FieldInfo fieldInfo : fieldInfoList) {
-            result.append(fieldInfo.getBaseInfo()).append('\n');
-        }
-    }
-
-    private void describeMethods(StringBuilder result) {
-        for (MethodInfo methodInfo : methodInfoList) {
-            result.append(methodInfo.getInfo()).append('\n');
+    private void describeMembers(StringBuilder result) {
+        for (int i = 0; i < memberInfoList.size(); ++i) {
+            result.append(memberInfoList.get(i).getInfo());
+            if (i != memberInfoList.size() - 1) {
+                result.append('\n');
+            }
         }
     }
 
