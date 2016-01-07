@@ -10,9 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-/**
- * Created by kehanyang on 12/30/15.
- */
 public class FieldInfo {
 
     private FieldAccessFlag accessFlag;
@@ -50,7 +47,7 @@ public class FieldInfo {
     public String toString() {
         StringBuilder result = new StringBuilder();
         result.append(accessFlag.getFieldModifiers());
-        result.append(ConvertTool.convertSingleDescriptor(descriptor)).append(' ');
+        result.append(ConvertTool.parseSingleDescriptor(descriptor)).append(' ');
         result.append(name).append(';');
         return result.toString();
     }

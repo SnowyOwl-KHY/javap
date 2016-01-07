@@ -1,11 +1,10 @@
 package me.kehycs.javap.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-/**
- * Created by kehanyang on 12/29/15.
- */
 public class ConvertTool {
 
     public static long parseNumber(byte[] bytes, int beginIndex, int endIndex) {
@@ -36,7 +35,7 @@ public class ConvertTool {
         descriptorMap.put('V', "void");
     }
 
-    public static String convertSingleDescriptor(String singleDescriptor) {
+    public static String parseSingleDescriptor(String singleDescriptor) {
         int arrayDimensionCount = 0;
         for (; arrayDimensionCount < singleDescriptor.length() && singleDescriptor.charAt(arrayDimensionCount) == '['; ++arrayDimensionCount)
             ;
@@ -54,6 +53,30 @@ public class ConvertTool {
             result.append("[]");
         }
         return result.toString().replace('/', '.');
+    }
+
+    public static Pair<String, String[]> parseMethodDescriptor(String methodDescriptor) {
+        int rightBracketIndex = methodDescriptor.indexOf(')');
+
+        String returnTypeDescriptor = methodDescriptor.substring(rightBracketIndex + 1);
+
+        String parameterTypeDescriptor = methodDescriptor.substring(1, rightBracketIndex);
+        List<String> parameterTypeList = new ArrayList<>();
+        for (int i = 0; i < parameterTypeDescriptor.length(); ++i) {
+            int beginIndex = i;
+            while (parameterTypeDescriptor.charAt(i) == '[') {
+                ++i;
+            }
+            if (parameterTypeDescriptor.charAt(i) == 'L') {
+                ++i;
+                while (parameterTypeDescriptor.charAt(i) != ';') {
+                    ++i;
+                }
+            }
+            parameterTypeList.add(parseSingleDescriptor(parameterTypeDescriptor.substring(beginIndex, i)));
+        }
+        String[] parameterTypeArray = parameterTypeList.toArray(new String[0]);
+        return new Pair<>(returnTypeDescriptor, parameterTypeArray);
     }
 
 }

@@ -1,8 +1,5 @@
 package me.kehycs.javap.util;
 
-/**
- * Created by kehanyang on 12/24/15.
- */
 public class Pair<T, U> {
 
     public T first;

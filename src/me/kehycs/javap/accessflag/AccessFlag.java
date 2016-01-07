@@ -6,9 +6,6 @@ import me.kehycs.javap.util.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by kehanyang on 12/29/15.
- */
 public class AccessFlag {
 
     public static final int PUBLIC = 0x0001;

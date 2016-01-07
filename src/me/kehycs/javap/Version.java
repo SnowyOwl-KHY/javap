@@ -1,8 +1,5 @@
 package me.kehycs.javap;
 
-/**
- * Created by kehanyang on 12/29/15.
- */
 public class Version {
 
     private int major;

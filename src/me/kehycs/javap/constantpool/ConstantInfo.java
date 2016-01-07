@@ -7,9 +7,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by kehanyang on 12/29/15.
- */
 public abstract class ConstantInfo {
 
     private static final Map<Integer, Class<? extends ConstantInfo>> typeMap = new HashMap<>();

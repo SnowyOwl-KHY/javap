@@ -5,9 +5,6 @@ import me.kehycs.javap.util.ConvertTool;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * Created by kehanyang on 12/29/15.
- */
 public class NameAndTypeInfo extends ConstantInfo {
 
     private int nameIndex;

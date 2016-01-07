@@ -6,9 +6,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * Created by kehanyang on 12/29/15.
- */
 public class Main {
 
     public static void main(String[] args) throws IOException, ClassFileParseException {
