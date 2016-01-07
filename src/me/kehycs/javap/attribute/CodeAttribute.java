@@ -1,5 +1,6 @@
 package me.kehycs.javap.attribute;
 
+import me.kehycs.javap.constantpool.ConstantPoolSource;
 import me.kehycs.javap.exception.ClassFileParseException;
 import me.kehycs.javap.util.ConvertTool;
 
@@ -45,6 +46,35 @@ public class CodeAttribute extends AttributeInfo {
         for (int i = 0; i < attributeCount; ++i) {
             AttributeInfo attributeInfo = AttributeInfo.newAttributeInfo(inputStream, constantPoolSource);
             attributeInfoList.add(attributeInfo);
+        }
+    }
+
+    public static class ExceptionInfo {
+
+        private int startPC;
+
+        private int endPC;
+
+        private int handlerPC;
+
+        private String catchType;
+
+        public ExceptionInfo(InputStream inputStream, ConstantPoolSource constantPoolSource) throws IOException {
+            byte[] tempData = new byte[2];
+
+            inputStream.read(tempData);
+            startPC = (int) ConvertTool.parseNumber(tempData);
+            inputStream.read(tempData);
+            endPC = (int) ConvertTool.parseNumber(tempData);
+            inputStream.read(tempData);
+            handlerPC = (int) ConvertTool.parseNumber(tempData);
+            inputStream.read(tempData);
+            int catchTypeIndex = (int) ConvertTool.parseNumber(tempData);
+            if (catchTypeIndex == 0) {
+                catchType = "any";
+            } else {
+                catchType = constantPoolSource.getConstantInfo(catchTypeIndex).getRealContent();
+            }
         }
     }
 }
