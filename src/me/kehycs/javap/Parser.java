@@ -35,6 +35,10 @@ public class Parser implements ConstantPoolSource {
         this.inputStream = inputStream;
     }
 
+    public void close() throws IOException {
+        inputStream.close();
+    }
+
     public String parse() throws IOException, ClassFileParseException {
 
         readMagicNumber();
@@ -126,6 +130,16 @@ public class Parser implements ConstantPoolSource {
         for (int i = 0; i < fieldInfoCount; i++) {
             FieldInfo fieldInfo = new FieldInfo(inputStream, this);
             fieldInfoList.add(fieldInfo);
+        }
+    }
+
+    public void readMethodInfo() throws IOException, ClassFileParseException {
+        byte[] tempData = new byte[2];
+
+        inputStream.read(tempData);
+        int methodInfoCount = (int) ConvertTool.parseNumber(tempData);
+        for (int i = 0; i < methodInfoCount; ++i) {
+
         }
     }
 

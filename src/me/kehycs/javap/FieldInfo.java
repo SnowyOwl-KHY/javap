@@ -8,6 +8,7 @@ import me.kehycs.javap.util.ConvertTool;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FieldInfo {
@@ -18,7 +19,7 @@ public class FieldInfo {
 
     private String descriptor;
 
-    private List<AttributeInfo> attributeInfoList;
+    private List<AttributeInfo> attributeInfoList = new ArrayList<>();
 
     public FieldInfo(InputStream inputStream, ConstantPoolSource constantPool) throws IOException, ClassFileParseException {
         byte[] tempData = new byte[2];
@@ -38,7 +39,7 @@ public class FieldInfo {
         inputStream.read(tempData);
         int attributeCount = (int) ConvertTool.parseNumber(tempData);
         for (int i = 0; i < attributeCount; ++i) {
-            AttributeInfo attributeInfo = new AttributeInfo(inputStream);
+            AttributeInfo attributeInfo = AttributeInfo.newAttributeInfo(inputStream, constantPool);
             attributeInfoList.add(attributeInfo);
         }
     }

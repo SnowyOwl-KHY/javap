@@ -10,7 +10,6 @@ import java.util.Map;
 public abstract class ConstantInfo {
 
     private static final Map<Integer, Class<? extends ConstantInfo>> typeMap = new HashMap<>();
-
     static {
         typeMap.put(1, Utf8Info.class);
         typeMap.put(7, ClassInfo.class);
@@ -18,7 +17,7 @@ public abstract class ConstantInfo {
         typeMap.put(12, NameAndTypeInfo.class);
     }
 
-    ConstantPoolSource constantPoolSource;
+    protected ConstantPoolSource constantPoolSource;
 
     public static ConstantInfo newConstantInfo(InputStream inputStream, ConstantPoolSource constantPool) throws IOException, ClassFileParseException {
         int tag = inputStream.read();
@@ -26,14 +25,16 @@ public abstract class ConstantInfo {
         if (typeClass == null) {
             throw new ClassFileParseException("Not supported constant type.");
         }
-        ConstantInfo constantInfo = null;
+        ConstantInfo constantInfo;
         try {
             constantInfo = typeClass.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
+            return null;
         }
         constantInfo.constantPoolSource = constantPool;
         constantInfo.readData(inputStream);
+
         return constantInfo;
     }
 
