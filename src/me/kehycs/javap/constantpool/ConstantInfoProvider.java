@@ -1,6 +1,6 @@
 package me.kehycs.javap.constantpool;
 
-public interface ConstantPoolSource {
+public interface ConstantInfoProvider {
 
     ConstantInfo getConstantInfo(int index);
 

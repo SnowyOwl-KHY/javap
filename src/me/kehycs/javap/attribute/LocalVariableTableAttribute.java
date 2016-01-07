@@ -1,6 +1,6 @@
 package me.kehycs.javap.attribute;
 
-import me.kehycs.javap.constantpool.ConstantPoolSource;
+import me.kehycs.javap.constantpool.ConstantInfoProvider;
 import me.kehycs.javap.exception.ClassFileParseException;
 import me.kehycs.javap.util.ConvertTool;
 
@@ -18,9 +18,14 @@ public class LocalVariableTableAttribute extends AttributeInfo {
 
         int localVariableInfoListLength = dataInputStream.readUnsignedShort();
         for (int i = 0; i < localVariableInfoListLength; ++i) {
-            LocalVariableInfo localVariableInfo = new LocalVariableInfo(dataInputStream, constantPoolSource);
+            LocalVariableInfo localVariableInfo = new LocalVariableInfo(dataInputStream, constantInfoProvider);
             localVariableInfoList.add(localVariableInfo);
         }
+    }
+
+    @Override
+    public String describe(int blankNumber) {
+        return "";
     }
 
     public static class LocalVariableInfo {
@@ -35,16 +40,16 @@ public class LocalVariableTableAttribute extends AttributeInfo {
 
         private int index;
 
-        public LocalVariableInfo(DataInputStream dataInputStream, ConstantPoolSource constantPoolSource) throws IOException {
+        public LocalVariableInfo(DataInputStream dataInputStream, ConstantInfoProvider constantInfoProvider) throws IOException {
             startPC = dataInputStream.readUnsignedShort();
 
             length = dataInputStream.readUnsignedShort();
 
             int nameIndex = dataInputStream.readUnsignedShort();
-            name = constantPoolSource.getConstantInfo(nameIndex).getRealContent();
+            name = constantInfoProvider.getConstantInfo(nameIndex).getRealContent();
 
             int descriptorIndex = dataInputStream.readUnsignedShort();
-            descriptor = ConvertTool.parseSingleDescriptor(constantPoolSource.getConstantInfo(descriptorIndex).getRealContent());
+            descriptor = ConvertTool.parseSingleDescriptor(constantInfoProvider.getConstantInfo(descriptorIndex).getRealContent());
 
             index = dataInputStream.readUnsignedShort();
         }

@@ -1,6 +1,7 @@
 package me.kehycs.javap.attribute;
 
 import me.kehycs.javap.exception.ClassFileParseException;
+import me.kehycs.javap.util.ConvertTool;
 import me.kehycs.javap.util.Pair;
 
 import java.io.DataInputStream;
@@ -18,8 +19,22 @@ public class LineNumberTableAttribute extends AttributeInfo {
         int lineNumberInfoListLength = dataInputStream.readUnsignedShort();
         for (int i = 0; i < lineNumberInfoListLength; ++i) {
             int startPC = dataInputStream.readUnsignedShort();
-            int lineNumber = dataInputStream.readUnsignedShort();
-            lineNumberInfoList.add(new Pair<>(startPC, lineNumber));
+            int sourceLineNumber = dataInputStream.readUnsignedShort();
+            lineNumberInfoList.add(new Pair<>(startPC, sourceLineNumber));
         }
+    }
+
+    @Override
+    public String describe(int blankNumber) {
+        StringBuilder result = new StringBuilder();
+
+        result.append(ConvertTool.getBlank(blankNumber)).append("LineNumberTable:\n");
+
+        for (Pair<Integer, Integer> lineNumberInfo : lineNumberInfoList) {
+            int sourceLineNumber = lineNumberInfo.second;
+            int startPC = lineNumberInfo.first;
+            result.append(ConvertTool.getBlank(blankNumber + 2)).append("line ").append(sourceLineNumber).append(": ").append(startPC).append('\n');
+        }
+        return result.toString();
     }
 }

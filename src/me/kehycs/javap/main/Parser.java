@@ -1,8 +1,8 @@
-package me.kehycs.javap;
+package me.kehycs.javap.main;
 
 import me.kehycs.javap.accessflag.ClassAccessFlag;
 import me.kehycs.javap.constantpool.ConstantInfo;
-import me.kehycs.javap.constantpool.ConstantPoolSource;
+import me.kehycs.javap.constantpool.ConstantInfoProvider;
 import me.kehycs.javap.exception.ClassFileParseException;
 import me.kehycs.javap.member.FieldInfo;
 import me.kehycs.javap.member.MethodInfo;
@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Parser implements ConstantPoolSource {
+public class Parser implements ConstantInfoProvider, ClassInfoProvider {
 
     private static final byte[] MAGIC_NUMBER = {(byte) 0xCA, (byte) 0xFE, (byte) 0xBA, (byte) 0xBE};
 
@@ -119,7 +119,7 @@ public class Parser implements ConstantPoolSource {
     private void readFieldInfo() throws IOException, ClassFileParseException {
         int fieldInfoCount = dataInputStream.readUnsignedShort();
         for (int i = 0; i < fieldInfoCount; i++) {
-            FieldInfo fieldInfo = new FieldInfo(dataInputStream, this);
+            FieldInfo fieldInfo = new FieldInfo(dataInputStream, this, this);
             fieldInfoList.add(fieldInfo);
         }
     }
@@ -127,7 +127,7 @@ public class Parser implements ConstantPoolSource {
     public void readMethodInfo() throws IOException, ClassFileParseException {
         int methodInfoCount = dataInputStream.readUnsignedShort();
         for (int i = 0; i < methodInfoCount; ++i) {
-            MethodInfo methodInfo = new MethodInfo(dataInputStream, this);
+            MethodInfo methodInfo = new MethodInfo(dataInputStream, this, this);
             methodInfoList.add(methodInfo);
         }
     }
@@ -194,8 +194,11 @@ public class Parser implements ConstantPoolSource {
 
     private void describeMethods(StringBuilder result) {
         for (MethodInfo methodInfo : methodInfoList) {
-            result.append(methodInfo.getBaseInfo()).append('\n');
+            result.append(methodInfo.getInfo()).append('\n');
         }
     }
-    
+
+    public String getClassName() {
+        return className;
+    }
 }

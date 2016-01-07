@@ -3,7 +3,7 @@ package me.kehycs.javap.constantpool;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public class MethodRefInfo extends ConstantInfo {
+public class MethodRefConstant extends ConstantInfo {
 
     private int classIndex;
 
@@ -27,7 +27,7 @@ public class MethodRefInfo extends ConstantInfo {
 
     @Override
     public String getRealContent() {
-        return constantPoolSource.getConstantInfo(classIndex).getRealContent()
-                + "." + constantPoolSource.getConstantInfo(nameAndTypeIndex).getRealContent();
+        return constantInfoProvider.getConstantInfo(classIndex).getRealContent()
+                + "." + constantInfoProvider.getConstantInfo(nameAndTypeIndex).getRealContent();
     }
 }

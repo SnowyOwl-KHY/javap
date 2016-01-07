@@ -11,15 +11,15 @@ public abstract class ConstantInfo {
 
     private static final Map<Integer, Class<? extends ConstantInfo>> typeMap = new HashMap<>();
     static {
-        typeMap.put(1, Utf8Info.class);
-        typeMap.put(7, ClassInfo.class);
-        typeMap.put(10, MethodRefInfo.class);
-        typeMap.put(12, NameAndTypeInfo.class);
+        typeMap.put(1, UTF8Constant.class);
+        typeMap.put(7, ClassConstant.class);
+        typeMap.put(10, MethodRefConstant.class);
+        typeMap.put(12, NameAndTypeConstant.class);
     }
 
-    protected ConstantPoolSource constantPoolSource;
+    protected ConstantInfoProvider constantInfoProvider;
 
-    public static ConstantInfo newConstantInfo(DataInputStream dataInputStream, ConstantPoolSource constantPool) throws IOException, ClassFileParseException {
+    public static ConstantInfo newConstantInfo(DataInputStream dataInputStream, ConstantInfoProvider constantPool) throws IOException, ClassFileParseException {
         int tag = dataInputStream.read();
         Class<? extends ConstantInfo> typeClass = typeMap.get(tag);
         if (typeClass == null) {
@@ -32,7 +32,7 @@ public abstract class ConstantInfo {
             e.printStackTrace();
             return null;
         }
-        constantInfo.constantPoolSource = constantPool;
+        constantInfo.constantInfoProvider = constantPool;
         constantInfo.readData(dataInputStream);
 
         return constantInfo;

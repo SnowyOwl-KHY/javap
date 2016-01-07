@@ -87,4 +87,21 @@ public class ConvertTool {
         return new Pair<>(returnTypeDescriptor, parameterTypeArray);
     }
 
+    private static Map<Integer, String> blankCache = new HashMap<>();
+
+    public static String getBlank(int blankNumber) {
+        String blank = blankCache.get(blankNumber);
+        if (blank != null) {
+            return blank;
+        }
+
+        StringBuilder blankBuilder = new StringBuilder();
+        for (int i = 0; i < blankNumber; ++i) {
+            blankBuilder.append(' ');
+        }
+        blank = blankBuilder.toString();
+        blankCache.put(blankNumber, blank);
+        return blank;
+    }
+
 }

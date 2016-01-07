@@ -1,4 +1,4 @@
-package me.kehycs.javap;
+package me.kehycs.javap.main;
 
 import me.kehycs.javap.exception.ClassFileParseException;
 

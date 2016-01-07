@@ -1,6 +1,6 @@
 package me.kehycs.javap.attribute;
 
-import me.kehycs.javap.constantpool.ConstantPoolSource;
+import me.kehycs.javap.constantpool.ConstantInfoProvider;
 import me.kehycs.javap.exception.ClassFileParseException;
 import me.kehycs.javap.util.ConvertTool;
 
@@ -21,11 +21,11 @@ public abstract class AttributeInfo {
         typeMap.put("LocalVariableTable", LocalVariableTableAttribute.class);
     }
 
-    protected ConstantPoolSource constantPoolSource;
+    protected ConstantInfoProvider constantInfoProvider;
 
-    public static AttributeInfo newAttributeInfo(DataInputStream dataInputStream, ConstantPoolSource constantPoolSource) throws IOException, ClassFileParseException {
+    public static AttributeInfo newAttributeInfo(DataInputStream dataInputStream, ConstantInfoProvider constantInfoProvider) throws IOException, ClassFileParseException {
         int nameIndex = dataInputStream.readUnsignedShort();
-        String name = constantPoolSource.getConstantInfo(nameIndex).getRealContent();
+        String name = constantInfoProvider.getConstantInfo(nameIndex).getRealContent();
 
         Class<? extends AttributeInfo> typeClass = typeMap.get(name);
         if (typeClass == null) {
@@ -39,7 +39,7 @@ public abstract class AttributeInfo {
             e.printStackTrace();
             return null;
         }
-        attributeInfo.constantPoolSource = constantPoolSource;
+        attributeInfo.constantInfoProvider = constantInfoProvider;
         attributeInfo.length = ConvertTool.readUnsignedInt(dataInputStream);
         attributeInfo.readData(dataInputStream);
 
@@ -47,5 +47,7 @@ public abstract class AttributeInfo {
     }
 
     public abstract void readData(DataInputStream dataInputStream) throws IOException, ClassFileParseException;
+
+    public abstract String describe(int blankNumber);
 
 }

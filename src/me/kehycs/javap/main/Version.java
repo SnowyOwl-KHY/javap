@@ -1,4 +1,4 @@
-package me.kehycs.javap;
+package me.kehycs.javap.main;
 
 public class Version {
 

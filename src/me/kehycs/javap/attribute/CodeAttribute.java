@@ -1,6 +1,6 @@
 package me.kehycs.javap.attribute;
 
-import me.kehycs.javap.constantpool.ConstantPoolSource;
+import me.kehycs.javap.constantpool.ConstantInfoProvider;
 import me.kehycs.javap.exception.ClassFileParseException;
 import me.kehycs.javap.util.ConvertTool;
 
@@ -33,15 +33,29 @@ public class CodeAttribute extends AttributeInfo {
 
         int exceptionTableLength = dataInputStream.readUnsignedShort();
         for (int i = 0; i < exceptionTableLength; ++i) {
-            ExceptionInfo exceptionInfo = new ExceptionInfo(dataInputStream, constantPoolSource);
+            ExceptionInfo exceptionInfo = new ExceptionInfo(dataInputStream, constantInfoProvider);
             exceptionTable.add(exceptionInfo);
         }
 
         int attributeCount = dataInputStream.readUnsignedShort();
         for (int i = 0; i < attributeCount; ++i) {
-            AttributeInfo attributeInfo = AttributeInfo.newAttributeInfo(dataInputStream, constantPoolSource);
+            AttributeInfo attributeInfo = AttributeInfo.newAttributeInfo(dataInputStream, constantInfoProvider);
             attributeInfoList.add(attributeInfo);
         }
+    }
+
+    @Override
+    public String describe(int blankNumber) {
+        StringBuilder result = new StringBuilder();
+
+        result.append(ConvertTool.getBlank(blankNumber)).append("Code:\n");
+
+        result.append(ConvertTool.getBlank(blankNumber + 2)).append("stack=").append(maxStack).append(", locals=").append(maxLocals).append('\n');
+
+        for (int i = 0; i < attributeInfoList.size(); ++i) {
+            result.append(attributeInfoList.get(i).describe(blankNumber + 2));
+        }
+        return result.toString();
     }
 
     public static class ExceptionInfo {
@@ -54,7 +68,7 @@ public class CodeAttribute extends AttributeInfo {
 
         private String catchType;
 
-        public ExceptionInfo(DataInputStream dataInputStream, ConstantPoolSource constantPoolSource) throws IOException {
+        public ExceptionInfo(DataInputStream dataInputStream, ConstantInfoProvider constantInfoProvider) throws IOException {
 
             startPC = dataInputStream.readUnsignedShort();
             endPC = dataInputStream.readUnsignedShort();
@@ -63,7 +77,7 @@ public class CodeAttribute extends AttributeInfo {
             if (catchTypeIndex == 0) {
                 catchType = "any";
             } else {
-                catchType = constantPoolSource.getConstantInfo(catchTypeIndex).getRealContent();
+                catchType = constantInfoProvider.getConstantInfo(catchTypeIndex).getRealContent();
             }
         }
     }
