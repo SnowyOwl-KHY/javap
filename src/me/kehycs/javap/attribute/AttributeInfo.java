@@ -4,8 +4,8 @@ import me.kehycs.javap.constantpool.ConstantPoolSource;
 import me.kehycs.javap.exception.ClassFileParseException;
 import me.kehycs.javap.util.ConvertTool;
 
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,11 +20,8 @@ public abstract class AttributeInfo {
 
     protected ConstantPoolSource constantPoolSource;
 
-    public static AttributeInfo newAttributeInfo(InputStream inputStream, ConstantPoolSource constantPoolSource) throws IOException, ClassFileParseException {
-        byte[] tempData = new byte[4];
-
-        inputStream.read(tempData, 0, 2);
-        int nameIndex = (int) ConvertTool.parseNumber(tempData, 0, 2);
+    public static AttributeInfo newAttributeInfo(DataInputStream dataInputStream, ConstantPoolSource constantPoolSource) throws IOException, ClassFileParseException {
+        int nameIndex = dataInputStream.readUnsignedShort();
         String name = constantPoolSource.getConstantInfo(nameIndex).getRealContent();
 
         Class<? extends AttributeInfo> typeClass = typeMap.get(name);
@@ -40,13 +37,12 @@ public abstract class AttributeInfo {
             return null;
         }
         attributeInfo.constantPoolSource = constantPoolSource;
-        inputStream.read(tempData);
-        attributeInfo.length = ConvertTool.parseNumber(tempData);
-        attributeInfo.readData(inputStream);
+        attributeInfo.length = ConvertTool.readUnsignedInt(dataInputStream);
+        attributeInfo.readData(dataInputStream);
 
         return attributeInfo;
     }
 
-    public abstract void readData(InputStream inputStream) throws IOException, ClassFileParseException;
+    public abstract void readData(DataInputStream dataInputStream) throws IOException, ClassFileParseException;
 
 }

@@ -2,8 +2,8 @@ package me.kehycs.javap.constantpool;
 
 import me.kehycs.javap.exception.ClassFileParseException;
 
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,8 +19,8 @@ public abstract class ConstantInfo {
 
     protected ConstantPoolSource constantPoolSource;
 
-    public static ConstantInfo newConstantInfo(InputStream inputStream, ConstantPoolSource constantPool) throws IOException, ClassFileParseException {
-        int tag = inputStream.read();
+    public static ConstantInfo newConstantInfo(DataInputStream dataInputStream, ConstantPoolSource constantPool) throws IOException, ClassFileParseException {
+        int tag = dataInputStream.read();
         Class<? extends ConstantInfo> typeClass = typeMap.get(tag);
         if (typeClass == null) {
             throw new ClassFileParseException("Not supported constant type.");
@@ -33,12 +33,12 @@ public abstract class ConstantInfo {
             return null;
         }
         constantInfo.constantPoolSource = constantPool;
-        constantInfo.readData(inputStream);
+        constantInfo.readData(dataInputStream);
 
         return constantInfo;
     }
 
-    public abstract void readData(InputStream inputStream) throws IOException;
+    public abstract void readData(DataInputStream dataInputStream) throws IOException;
 
     @Override
     public String toString() {

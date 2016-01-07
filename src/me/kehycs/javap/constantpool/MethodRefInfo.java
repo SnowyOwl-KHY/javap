@@ -1,9 +1,7 @@
 package me.kehycs.javap.constantpool;
 
-import me.kehycs.javap.util.ConvertTool;
-
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 public class MethodRefInfo extends ConstantInfo {
 
@@ -12,12 +10,9 @@ public class MethodRefInfo extends ConstantInfo {
     private int nameAndTypeIndex;
 
     @Override
-    public void readData(InputStream inputStream) throws IOException {
-        byte[] temp = new byte[2];
-        inputStream.read(temp);
-        classIndex = (int) ConvertTool.parseNumber(temp);
-        inputStream.read(temp);
-        nameAndTypeIndex = (int) ConvertTool.parseNumber(temp);
+    public void readData(DataInputStream dataInputStream) throws IOException {
+        classIndex = dataInputStream.readUnsignedShort();
+        nameAndTypeIndex = dataInputStream.readUnsignedShort();
     }
 
     @Override

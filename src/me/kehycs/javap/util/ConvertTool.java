@@ -1,5 +1,7 @@
 package me.kehycs.javap.util;
 
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +21,12 @@ public class ConvertTool {
 
     public static long parseNumber(byte[] bytes) {
         return parseNumber(bytes, 0, bytes.length);
+    }
+
+    public static long readUnsignedInt(DataInputStream dataInputStream) throws IOException {
+        long higherPart = dataInputStream.readUnsignedShort();
+        long lowerPart = dataInputStream.readUnsignedShort();
+        return (higherPart << 16) + (lowerPart << 16);
     }
 
     private static final Map<Character, String> descriptorMap = new HashMap<>();

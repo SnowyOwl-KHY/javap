@@ -1,21 +1,17 @@
 package me.kehycs.javap.constantpool;
 
-import me.kehycs.javap.util.ConvertTool;
-
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 public class Utf8Info extends ConstantInfo {
 
     private String string;
 
     @Override
-    public void readData(InputStream inputStream) throws IOException {
-        byte[] temp = new byte[2];
-        inputStream.read(temp);
-        int length = (int) ConvertTool.parseNumber(temp);
-        temp = new byte[length];
-        inputStream.read(temp);
+    public void readData(DataInputStream dataInputStream) throws IOException {
+        int length = dataInputStream.readUnsignedShort();
+        byte[] temp = new byte[length];
+        dataInputStream.read(temp);
         string = new String(temp, "UTF-8");
     }
 

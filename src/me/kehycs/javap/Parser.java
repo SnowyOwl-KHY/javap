@@ -4,10 +4,9 @@ import me.kehycs.javap.accessflag.ClassAccessFlag;
 import me.kehycs.javap.constantpool.ConstantInfo;
 import me.kehycs.javap.constantpool.ConstantPoolSource;
 import me.kehycs.javap.exception.ClassFileParseException;
-import me.kehycs.javap.util.ConvertTool;
 
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +14,7 @@ public class Parser implements ConstantPoolSource {
 
     private static final byte[] MAGIC_NUMBER = {(byte) 0xCA, (byte) 0xFE, (byte) 0xBA, (byte) 0xBE};
 
-    private InputStream inputStream;
+    private DataInputStream dataInputStream;
 
     private Version version;
 
@@ -31,12 +30,12 @@ public class Parser implements ConstantPoolSource {
 
     private List<FieldInfo> fieldInfoList = new ArrayList<>();
 
-    public Parser(InputStream inputStream) {
-        this.inputStream = inputStream;
+    public Parser(DataInputStream dataInputStream) {
+        this.dataInputStream = dataInputStream;
     }
 
     public void close() throws IOException {
-        inputStream.close();
+        dataInputStream.close();
     }
 
     public String parse() throws IOException, ClassFileParseException {
@@ -70,74 +69,57 @@ public class Parser implements ConstantPoolSource {
 
     private void readMagicNumber() throws IOException, ClassFileParseException {
         byte[] tempData = new byte[4];
-        inputStream.read(tempData);
+        dataInputStream.read(tempData);
         if (!isMagicNumber(tempData)) {
             throw new ClassFileParseException("Magic number error.");
         }
     }
 
     private void readVersion() throws IOException {
-        byte[] tempData = new byte[4];
-        inputStream.read(tempData);
-        int majorVersionNumber = (int) ConvertTool.parseNumber(tempData, 2, 4);
-        int minorVersionNumber = (int) ConvertTool.parseNumber(tempData, 0, 2);
+        int minorVersionNumber = dataInputStream.readUnsignedShort();
+        int majorVersionNumber = dataInputStream.readUnsignedShort();
         version = new Version(majorVersionNumber, minorVersionNumber);
     }
 
     private void readConstantPool() throws IOException, ClassFileParseException {
-        byte[] tempData = new byte[2];
-        inputStream.read(tempData);
-        int constantPoolCount = (int) ConvertTool.parseNumber(tempData) - 1;
+        int constantPoolCount = dataInputStream.readUnsignedShort() - 1;
 
         for (int i = 0; i < constantPoolCount; ++i) {
-            ConstantInfo constantInfo = ConstantInfo.newConstantInfo(inputStream, this);
+            ConstantInfo constantInfo = ConstantInfo.newConstantInfo(dataInputStream, this);
             constantPool.add(constantInfo);
         }
     }
 
     private void readAccessFlag() throws IOException, ClassFileParseException {
-        byte[] tempData = new byte[2];
-        inputStream.read(tempData, 0, 2);
-        int accessFlags = (int) ConvertTool.parseNumber(tempData, 0, 2);
+        int accessFlags = dataInputStream.readUnsignedShort();
         classAccessFlag = new ClassAccessFlag(accessFlags);
     }
 
     private void readClassInfo() throws IOException {
-        byte[] tempData = new byte[2];
 
-        inputStream.read(tempData);
-        int classIndex = (int) ConvertTool.parseNumber(tempData);
+        int classIndex = dataInputStream.readUnsignedShort();
         className = getConstantInfo(classIndex).getRealContent();
 
-        inputStream.read(tempData);
-        int superClassIndex = (int) ConvertTool.parseNumber(tempData);
+        int superClassIndex = dataInputStream.readUnsignedShort();
         superClassName = getConstantInfo(superClassIndex).getRealContent();
 
-        inputStream.read(tempData);
-        int interfaceNumber = (int) ConvertTool.parseNumber(tempData);
+        int interfaceNumber = dataInputStream.readUnsignedShort();
         for (int i = 0; i < interfaceNumber; ++i) {
-            inputStream.read(tempData);
-            int interfaceIndex = (int) ConvertTool.parseNumber(tempData);
+            int interfaceIndex = dataInputStream.readUnsignedShort();
             interfaceNames.add(getConstantInfo(interfaceIndex).getRealContent());
         }
     }
 
     private void readFieldInfo() throws IOException, ClassFileParseException {
-        byte[] tempData = new byte[2];
-
-        inputStream.read(tempData);
-        int fieldInfoCount = (int) ConvertTool.parseNumber(tempData);
+        int fieldInfoCount = dataInputStream.readUnsignedShort();
         for (int i = 0; i < fieldInfoCount; i++) {
-            FieldInfo fieldInfo = new FieldInfo(inputStream, this);
+            FieldInfo fieldInfo = new FieldInfo(dataInputStream, this);
             fieldInfoList.add(fieldInfo);
         }
     }
 
     public void readMethodInfo() throws IOException, ClassFileParseException {
-        byte[] tempData = new byte[2];
-
-        inputStream.read(tempData);
-        int methodInfoCount = (int) ConvertTool.parseNumber(tempData);
+        int methodInfoCount = dataInputStream.readUnsignedShort();
         for (int i = 0; i < methodInfoCount; ++i) {
 
         }

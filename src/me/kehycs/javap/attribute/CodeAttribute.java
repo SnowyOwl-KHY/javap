@@ -4,8 +4,8 @@ import me.kehycs.javap.constantpool.ConstantPoolSource;
 import me.kehycs.javap.exception.ClassFileParseException;
 import me.kehycs.javap.util.ConvertTool;
 
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,29 +22,24 @@ public class CodeAttribute extends AttributeInfo {
     private List<AttributeInfo> attributeInfoList = new ArrayList<>();
 
     @Override
-    public void readData(InputStream inputStream) throws IOException, ClassFileParseException {
-        byte[] tempData = new byte[4];
+    public void readData(DataInputStream dataInputStream) throws IOException, ClassFileParseException {
 
-        inputStream.read(tempData);
-        maxStack = (int) ConvertTool.parseNumber(tempData, 0, 2);
-        maxLocals = (int) ConvertTool.parseNumber(tempData, 2, 4);
+        maxStack = dataInputStream.readUnsignedShort();
+        maxLocals = dataInputStream.readUnsignedShort();
 
-        inputStream.read(tempData);
-        int codeLength = (int) ConvertTool.parseNumber(tempData);
+        int codeLength = dataInputStream.readInt();
         code = new byte[codeLength];
-        inputStream.read(code);
+        dataInputStream.read(code);
 
-        inputStream.read(tempData, 0, 2);
-        int exceptionTableLength = (int) ConvertTool.parseNumber(tempData);
+        int exceptionTableLength = dataInputStream.readUnsignedShort();
         for (int i = 0; i < exceptionTableLength; ++i) {
-            ExceptionInfo exceptionInfo = new ExceptionInfo(inputStream, constantPoolSource);
+            ExceptionInfo exceptionInfo = new ExceptionInfo(dataInputStream, constantPoolSource);
             exceptionTable.add(exceptionInfo);
         }
 
-        inputStream.read(tempData, 0, 2);
-        int attributeCount = (int) ConvertTool.parseNumber(tempData);
+        int attributeCount = dataInputStream.readUnsignedShort();
         for (int i = 0; i < attributeCount; ++i) {
-            AttributeInfo attributeInfo = AttributeInfo.newAttributeInfo(inputStream, constantPoolSource);
+            AttributeInfo attributeInfo = AttributeInfo.newAttributeInfo(dataInputStream, constantPoolSource);
             attributeInfoList.add(attributeInfo);
         }
     }
@@ -59,17 +54,12 @@ public class CodeAttribute extends AttributeInfo {
 
         private String catchType;
 
-        public ExceptionInfo(InputStream inputStream, ConstantPoolSource constantPoolSource) throws IOException {
-            byte[] tempData = new byte[2];
+        public ExceptionInfo(DataInputStream dataInputStream, ConstantPoolSource constantPoolSource) throws IOException {
 
-            inputStream.read(tempData);
-            startPC = (int) ConvertTool.parseNumber(tempData);
-            inputStream.read(tempData);
-            endPC = (int) ConvertTool.parseNumber(tempData);
-            inputStream.read(tempData);
-            handlerPC = (int) ConvertTool.parseNumber(tempData);
-            inputStream.read(tempData);
-            int catchTypeIndex = (int) ConvertTool.parseNumber(tempData);
+            startPC = dataInputStream.readUnsignedShort();
+            endPC = dataInputStream.readUnsignedShort();
+            handlerPC = dataInputStream.readUnsignedShort();
+            int catchTypeIndex = dataInputStream.readUnsignedShort();
             if (catchTypeIndex == 0) {
                 catchType = "any";
             } else {

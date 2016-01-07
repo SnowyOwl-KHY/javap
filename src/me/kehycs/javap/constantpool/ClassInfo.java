@@ -1,19 +1,15 @@
 package me.kehycs.javap.constantpool;
 
-import me.kehycs.javap.util.ConvertTool;
-
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 public class ClassInfo extends ConstantInfo {
 
     private int nameIndex;
 
     @Override
-    public void readData(InputStream inputStream) throws IOException {
-        byte[] data = new byte[2];
-        inputStream.read(data);
-        nameIndex = (int) ConvertTool.parseNumber(data);
+    public void readData(DataInputStream dataInputStream) throws IOException {
+        nameIndex = dataInputStream.readUnsignedShort();
     }
 
     @Override

@@ -9,8 +9,8 @@ import java.io.IOException;
 public class Main {
 
     public static void main(String[] args) throws IOException, ClassFileParseException {
-        DataInputStream inputStream = new DataInputStream(new FileInputStream("/Users/kehanyang/Test/Java/HelloWorld.class"));
-        Parser parser = new Parser(inputStream);
+        DataInputStream dataInputStream = new DataInputStream(new FileInputStream("/Users/kehanyang/Test/Java/HelloWorld.class"));
+        Parser parser = new Parser(dataInputStream);
         System.out.println(parser.parse());
         parser.close();
     }

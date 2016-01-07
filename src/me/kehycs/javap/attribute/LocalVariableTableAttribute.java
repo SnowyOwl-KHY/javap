@@ -4,8 +4,8 @@ import me.kehycs.javap.constantpool.ConstantPoolSource;
 import me.kehycs.javap.exception.ClassFileParseException;
 import me.kehycs.javap.util.ConvertTool;
 
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,13 +14,11 @@ public class LocalVariableTableAttribute extends AttributeInfo {
     List<LocalVariableInfo> localVariableInfoList = new ArrayList<>();
 
     @Override
-    public void readData(InputStream inputStream) throws IOException, ClassFileParseException {
-        byte[] tempData = new byte[2];
+    public void readData(DataInputStream dataInputStream) throws IOException, ClassFileParseException {
 
-        inputStream.read(tempData);
-        int localVariableInfoListLength = (int) ConvertTool.parseNumber(tempData);
+        int localVariableInfoListLength = dataInputStream.readUnsignedShort();
         for (int i = 0; i < localVariableInfoListLength; ++i) {
-            LocalVariableInfo localVariableInfo = new LocalVariableInfo(inputStream, constantPoolSource);
+            LocalVariableInfo localVariableInfo = new LocalVariableInfo(dataInputStream, constantPoolSource);
             localVariableInfoList.add(localVariableInfo);
         }
     }
@@ -37,21 +35,18 @@ public class LocalVariableTableAttribute extends AttributeInfo {
 
         private int index;
 
-        public LocalVariableInfo(InputStream inputStream, ConstantPoolSource constantPoolSource) throws IOException {
-            byte[] tempData = new byte[2];
+        public LocalVariableInfo(DataInputStream dataInputStream, ConstantPoolSource constantPoolSource) throws IOException {
+            startPC = dataInputStream.readUnsignedShort();
 
-            inputStream.read(tempData);
-            startPC = (int) ConvertTool.parseNumber(tempData);
-            inputStream.read(tempData);
-            length = (int) ConvertTool.parseNumber(tempData);
-            inputStream.read(tempData);
-            int nameIndex = (int) ConvertTool.parseNumber(tempData);
+            length = dataInputStream.readUnsignedShort();
+
+            int nameIndex = dataInputStream.readUnsignedShort();
             name = constantPoolSource.getConstantInfo(nameIndex).getRealContent();
-            inputStream.read(tempData);
-            int descriptorIndex = (int) ConvertTool.parseNumber(tempData);
+
+            int descriptorIndex = dataInputStream.readUnsignedShort();
             descriptor = ConvertTool.parseSingleDescriptor(constantPoolSource.getConstantInfo(descriptorIndex).getRealContent());
-            inputStream.read(tempData);
-            index = (int) ConvertTool.parseNumber(tempData);
+
+            index = dataInputStream.readUnsignedShort();
         }
     }
 }
