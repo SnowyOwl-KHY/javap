@@ -101,7 +101,7 @@ public class MethodAccessFlag extends AccessFlag {
         return (flags & PROTECTED) != 0;
     }
 
-    private boolean isStatic() {
+    public boolean isStatic() {
         return (flags & STATIC) != 0;
     }
 

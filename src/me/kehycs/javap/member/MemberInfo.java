@@ -29,14 +29,22 @@ public abstract class MemberInfo {
         int nameIndex = dataInputStream.readUnsignedShort();
         name = constantInfoProvider.getConstantInfo(nameIndex).getRealContent();
 
-        int descriptorIndex = dataInputStream.readUnsignedShort();
-        descriptor = constantInfoProvider.getConstantInfo(descriptorIndex).getRealContent();
+        parseDescriptor(dataInputStream, constantInfoProvider);
 
         int attributeCount = dataInputStream.readUnsignedShort();
         for (int i = 0; i < attributeCount; ++i) {
             AttributeInfo attributeInfo = AttributeInfo.newAttributeInfo(dataInputStream, constantInfoProvider);
             attributeInfoList.add(attributeInfo);
+            additionalOperation(attributeInfo);
         }
+    }
+
+    protected void parseDescriptor(DataInputStream dataInputStream, ConstantInfoProvider constantInfoProvider) throws IOException {
+        int descriptorIndex = dataInputStream.readUnsignedShort();
+        descriptor = constantInfoProvider.getConstantInfo(descriptorIndex).getRealContent();
+    }
+
+    protected void additionalOperation(AttributeInfo attributeInfo) {
     }
 
     protected abstract void setAccessFlag(int flags) throws ClassFileParseException;

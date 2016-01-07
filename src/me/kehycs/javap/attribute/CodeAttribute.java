@@ -21,6 +21,12 @@ public class CodeAttribute extends AttributeInfo {
 
     private List<AttributeInfo> attributeInfoList = new ArrayList<>();
 
+    private int argsSize;
+
+    public void setArgsSize(int argsSize) {
+        this.argsSize = argsSize;
+    }
+
     @Override
     public void readData(DataInputStream dataInputStream) throws IOException, ClassFileParseException {
 
@@ -50,7 +56,7 @@ public class CodeAttribute extends AttributeInfo {
 
         result.append(ConvertTool.getBlank(blankNumber)).append("Code:\n");
 
-        result.append(ConvertTool.getBlank(blankNumber + 2)).append("stack=").append(maxStack).append(", locals=").append(maxLocals).append('\n');
+        result.append(ConvertTool.getBlank(blankNumber + 2)).append("stack=").append(maxStack).append(", locals=").append(maxLocals).append(", args_size=").append(argsSize).append('\n');
 
         for (int i = 0; i < attributeInfoList.size(); ++i) {
             result.append(attributeInfoList.get(i).describe(blankNumber + 2));

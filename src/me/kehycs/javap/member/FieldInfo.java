@@ -1,6 +1,7 @@
 package me.kehycs.javap.member;
 
 import me.kehycs.javap.accessflag.FieldAccessFlag;
+import me.kehycs.javap.attribute.AttributeInfo;
 import me.kehycs.javap.constantpool.ConstantInfoProvider;
 import me.kehycs.javap.exception.ClassFileParseException;
 import me.kehycs.javap.main.ClassInfoProvider;
