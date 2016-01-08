@@ -24,6 +24,7 @@ public abstract class ConstantInfo {
         typeMap.put(12, NameAndTypeConstant.class);
         typeMap.put(15, MethodHandleConstant.class);
         typeMap.put(16, MethodTypeConstant.class);
+        typeMap.put(18, InvokeDynamicConstant.class);
     }
 
     protected ConstantInfoProvider constantInfoProvider;
