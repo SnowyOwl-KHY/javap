@@ -22,6 +22,7 @@ public abstract class ConstantInfo {
         typeMap.put(10, MethodRefConstant.class);
         typeMap.put(11, InterfaceMethodRefConstant.class);
         typeMap.put(12, NameAndTypeConstant.class);
+        typeMap.put(15, MethodHandleConstant.class);
     }
 
     protected ConstantInfoProvider constantInfoProvider;
