@@ -12,7 +12,12 @@ public abstract class ConstantInfo {
     private static final Map<Integer, Class<? extends ConstantInfo>> typeMap = new HashMap<>();
     static {
         typeMap.put(1, Utf8Constant.class);
+        typeMap.put(3, IntegerConstant.class);
+        typeMap.put(4, FloatConstant.class);
+        typeMap.put(5, LongConstant.class);
+        typeMap.put(6, DoubleConstant.class);
         typeMap.put(7, ClassConstant.class);
+        typeMap.put(8, StringConstant.class);
         typeMap.put(10, MethodRefConstant.class);
         typeMap.put(12, NameAndTypeConstant.class);
     }
