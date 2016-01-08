@@ -3,30 +3,27 @@ package me.kehycs.javap.constantpool;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public class Utf8Constant extends ConstantInfo {
+public class IntegerConstant extends ConstantInfo {
 
-    private String string;
+    private int value;
 
     @Override
     public void readData(DataInputStream dataInputStream) throws IOException {
-        int length = dataInputStream.readUnsignedShort();
-        byte[] temp = new byte[length];
-        dataInputStream.read(temp);
-        string = new String(temp, "UTF-8");
+        value = dataInputStream.readInt();
     }
 
     @Override
     public String getTypeName() {
-        return "Utf8";
+        return "Integer";
     }
 
     @Override
     public String getContent() {
-        return string;
+        return String.valueOf(value);
     }
 
     @Override
     public String getRealContent() {
-        return string;
+        return String.valueOf(value);
     }
 }

@@ -11,7 +11,7 @@ public abstract class ConstantInfo {
 
     private static final Map<Integer, Class<? extends ConstantInfo>> typeMap = new HashMap<>();
     static {
-        typeMap.put(1, UTF8Constant.class);
+        typeMap.put(1, Utf8Constant.class);
         typeMap.put(7, ClassConstant.class);
         typeMap.put(10, MethodRefConstant.class);
         typeMap.put(12, NameAndTypeConstant.class);
