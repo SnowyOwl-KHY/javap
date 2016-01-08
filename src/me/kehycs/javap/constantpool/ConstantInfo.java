@@ -18,6 +18,7 @@ public abstract class ConstantInfo {
         typeMap.put(6, DoubleConstant.class);
         typeMap.put(7, ClassConstant.class);
         typeMap.put(8, StringConstant.class);
+        typeMap.put(9, FieldRefConstant.class);
         typeMap.put(10, MethodRefConstant.class);
         typeMap.put(12, NameAndTypeConstant.class);
     }
