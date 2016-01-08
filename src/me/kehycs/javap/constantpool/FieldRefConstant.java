@@ -3,7 +3,7 @@ package me.kehycs.javap.constantpool;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public class MethodRefConstant extends ConstantInfo {
+public class FieldRefConstant extends ConstantInfo {
 
     private int classIndex;
 
@@ -17,7 +17,7 @@ public class MethodRefConstant extends ConstantInfo {
 
     @Override
     public String getTypeName() {
-        return "MethodRef";
+        return "FieldRef";
     }
 
     @Override
