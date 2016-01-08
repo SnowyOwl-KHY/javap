@@ -19,6 +19,8 @@ public abstract class AttributeInfo {
         typeMap.put("Exception", ExceptionAttribute.class);
         typeMap.put("LineNumberTable", LineNumberTableAttribute.class);
         typeMap.put("LocalVariableTable", LocalVariableTableAttribute.class);
+        typeMap.put("SourceFile", SourceFileAttribute.class);
+        typeMap.put("ConstantValue", ConstantValueAttribute.class);
     }
 
     protected ConstantInfoProvider constantInfoProvider;

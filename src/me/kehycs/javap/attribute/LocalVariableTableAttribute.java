@@ -25,7 +25,7 @@ public class LocalVariableTableAttribute extends AttributeInfo {
 
     @Override
     public String describe(int blankNumber) {
-        return "";
+        return null;
     }
 
     public static class LocalVariableInfo {
