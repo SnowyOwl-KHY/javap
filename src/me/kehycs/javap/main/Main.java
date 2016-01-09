@@ -16,6 +16,7 @@ public class Main {
         Parser parser = new Parser(dataInputStream);
         System.out.println(parser.parse());
         parser.close();
+        in.close();
     }
 
 }
