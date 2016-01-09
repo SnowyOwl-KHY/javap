@@ -8,16 +8,15 @@ import me.kehycs.javap.member.FieldInfo;
 import me.kehycs.javap.member.MemberInfo;
 import me.kehycs.javap.member.MethodInfo;
 
-import java.io.DataInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Parser implements ConstantInfoProvider, ClassInfoProvider {
 
     private static final byte[] MAGIC_NUMBER = {(byte) 0xCA, (byte) 0xFE, (byte) 0xBA, (byte) 0xBE};
+
+    private File classFile;
 
     private DataInputStream dataInputStream;
 
@@ -35,7 +34,12 @@ public class Parser implements ConstantInfoProvider, ClassInfoProvider {
 
     private List<MemberInfo> memberInfoList = new ArrayList<>();
 
-    public Parser(DataInputStream dataInputStream) {
+    public Parser(File file) throws FileNotFoundException {
+        this(new DataInputStream(new FileInputStream(file)));
+        classFile = file;
+    }
+
+    private Parser(DataInputStream dataInputStream) {
         this.dataInputStream = dataInputStream;
     }
 
@@ -137,8 +141,10 @@ public class Parser implements ConstantInfoProvider, ClassInfoProvider {
         return constantPool.get(index - 1);     // 常量池索引从1开始
     }
 
-    private String describe() {
+    private String describe() throws IOException {
         StringBuilder result = new StringBuilder();
+
+        describeFile(result);
 
         describeClass(result);
 
@@ -152,6 +158,10 @@ public class Parser implements ConstantInfoProvider, ClassInfoProvider {
         describeMembers(result);
 
         return result.append('}').toString();
+    }
+
+    private void describeFile(StringBuilder result) throws IOException {
+        result.append("Classfile ").append(classFile.getCanonicalPath()).append('\n');
     }
 
     private void describeClass(StringBuilder result) {
@@ -200,8 +210,8 @@ public class Parser implements ConstantInfoProvider, ClassInfoProvider {
 
     // for test
     public static void main(String[] args) throws IOException, ClassFileParseException {
-        DataInputStream dataInputStream = new DataInputStream(new FileInputStream("/Users/kehanyang/Test/Java/HelloWorld.class"));
-        Parser parser = new Parser(dataInputStream);
+//        Parser parser = new Parser(new File("../../../../../Test/Java/HelloWorld.class"));
+        Parser parser = new Parser(new File("/Users/kehanyang/Test/Java/HelloWorld.class"));
         System.out.println(parser.parse());
         parser.close();
     }
