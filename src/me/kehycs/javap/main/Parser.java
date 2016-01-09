@@ -9,6 +9,8 @@ import me.kehycs.javap.member.MemberInfo;
 import me.kehycs.javap.member.MethodInfo;
 
 import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -194,5 +196,13 @@ public class Parser implements ConstantInfoProvider, ClassInfoProvider {
 
     public String getClassName() {
         return className;
+    }
+
+    // for test
+    public static void main(String[] args) throws IOException, ClassFileParseException {
+        DataInputStream dataInputStream = new DataInputStream(new FileInputStream("/Users/kehanyang/Test/Java/HelloWorld.class"));
+        Parser parser = new Parser(dataInputStream);
+        System.out.println(parser.parse());
+        parser.close();
     }
 }
