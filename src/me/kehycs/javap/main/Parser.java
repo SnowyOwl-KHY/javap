@@ -80,7 +80,10 @@ public class Parser implements ConstantInfoProvider, ClassInfoProvider {
 
     private void readMagicNumber() throws IOException, ClassFileParseException {
         byte[] tempData = new byte[4];
-        dataInputStream.read(tempData);
+        int length = dataInputStream.read(tempData);
+        if (length != 4) {
+            throw new ClassFileParseException("Too short file.");
+        }
         if (!isMagicNumber(tempData)) {
             throw new ClassFileParseException("Magic number error.");
         }
